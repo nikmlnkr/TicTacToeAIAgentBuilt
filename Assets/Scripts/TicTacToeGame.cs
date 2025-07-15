@@ -8,6 +8,9 @@ public class TicTacToeGame : MonoBehaviour
     public Text statusText;
     public Button restartButton;
     
+    [Header("UI Manager Reference")]
+    public UIManager uiManager;
+    
     [Header("Game State")]
     private string currentPlayer = "X";
     private string[] board = new string[9];
@@ -38,17 +41,27 @@ public class TicTacToeGame : MonoBehaviour
             board[i] = "";
         }
         
-        // Clear button texts
+        // Clear button texts and reset colors
         foreach (Button button in buttons)
         {
-            button.GetComponentInChildren<Text>().text = "";
+            Text buttonText = button.GetComponentInChildren<Text>();
+            if (buttonText != null)
+                buttonText.text = "";
             button.interactable = true;
+            
+            // Reset button color
+            Image buttonImage = button.GetComponent<Image>();
+            if (buttonImage != null)
+                buttonImage.color = Color.white;
         }
         
         UpdateStatusText("Player X's Turn");
         
         if (restartButton != null)
+        {
+            restartButton.onClick.RemoveAllListeners();
             restartButton.onClick.AddListener(RestartGame);
+        }
     }
     
     void SetupButtons()
@@ -56,6 +69,7 @@ public class TicTacToeGame : MonoBehaviour
         for (int i = 0; i < buttons.Length; i++)
         {
             int index = i; // Capture the index for closure
+            buttons[i].onClick.RemoveAllListeners();
             buttons[i].onClick.AddListener(() => OnCellClicked(index));
         }
     }
@@ -65,10 +79,24 @@ public class TicTacToeGame : MonoBehaviour
         if (!gameActive || !string.IsNullOrEmpty(board[index]))
             return;
         
+        // Play button click sound
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlayButtonClick();
+        
+        // Animate button press
+        if (uiManager != null)
+            uiManager.AnimateButtonPress(buttons[index]);
+        
         // Make the move
         board[index] = currentPlayer;
-        buttons[index].GetComponentInChildren<Text>().text = currentPlayer;
+        Text buttonText = buttons[index].GetComponentInChildren<Text>();
+        if (buttonText != null)
+            buttonText.text = currentPlayer;
         buttons[index].interactable = false;
+        
+        // Play move sound
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlayMove();
         
         // Check for win
         if (CheckWin())
@@ -76,6 +104,10 @@ public class TicTacToeGame : MonoBehaviour
             UpdateStatusText("Player " + currentPlayer + " Wins!");
             gameActive = false;
             DisableAllButtons();
+            
+            // Play win sound
+            if (SoundManager.Instance != null)
+                SoundManager.Instance.PlayWin();
             return;
         }
         
@@ -84,6 +116,10 @@ public class TicTacToeGame : MonoBehaviour
         {
             UpdateStatusText("It's a Draw!");
             gameActive = false;
+            
+            // Play draw sound
+            if (SoundManager.Instance != null)
+                SoundManager.Instance.PlayDraw();
             return;
         }
         
@@ -123,16 +159,31 @@ public class TicTacToeGame : MonoBehaviour
     
     void HighlightWinningCells(int a, int b, int c)
     {
-        buttons[a].GetComponent<Image>().color = Color.green;
-        buttons[b].GetComponent<Image>().color = Color.green;
-        buttons[c].GetComponent<Image>().color = Color.green;
+        if (a < buttons.Length && buttons[a] != null)
+        {
+            Image imageA = buttons[a].GetComponent<Image>();
+            if (imageA != null) imageA.color = Color.green;
+        }
+        
+        if (b < buttons.Length && buttons[b] != null)
+        {
+            Image imageB = buttons[b].GetComponent<Image>();
+            if (imageB != null) imageB.color = Color.green;
+        }
+        
+        if (c < buttons.Length && buttons[c] != null)
+        {
+            Image imageC = buttons[c].GetComponent<Image>();
+            if (imageC != null) imageC.color = Color.green;
+        }
     }
     
     void DisableAllButtons()
     {
         foreach (Button button in buttons)
         {
-            button.interactable = false;
+            if (button != null)
+                button.interactable = false;
         }
     }
     
@@ -144,10 +195,23 @@ public class TicTacToeGame : MonoBehaviour
     
     public void RestartGame()
     {
+        // Play button click sound
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlayButtonClick();
+        
+        // Animate restart button
+        if (uiManager != null && restartButton != null)
+            uiManager.AnimateButtonPress(restartButton);
+        
         // Reset button colors
         foreach (Button button in buttons)
         {
-            button.GetComponent<Image>().color = Color.white;
+            if (button != null)
+            {
+                Image buttonImage = button.GetComponent<Image>();
+                if (buttonImage != null)
+                    buttonImage.color = Color.white;
+            }
         }
         
         InitializeGame();
