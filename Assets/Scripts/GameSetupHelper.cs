@@ -30,7 +30,7 @@ public class GameSetupHelper : MonoBehaviour
         Debug.Log("Setting up Tic Tac Toe game scene...");
         
         // Create Canvas if it doesn't exist
-        Canvas canvas = FindObjectOfType<Canvas>();
+        Canvas canvas = FindAnyObjectByType<Canvas>();
         if (canvas == null)
         {
             canvas = CreateCanvas();
@@ -75,7 +75,7 @@ public class GameSetupHelper : MonoBehaviour
         canvasGO.AddComponent<GraphicRaycaster>();
         
         // Create EventSystem if it doesn't exist
-        if (FindObjectOfType<UnityEngine.EventSystems.EventSystem>() == null)
+        if (FindAnyObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
         {
             GameObject eventSystem = new GameObject("EventSystem");
             eventSystem.AddComponent<UnityEngine.EventSystems.EventSystem>();

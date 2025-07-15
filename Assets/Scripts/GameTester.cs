@@ -69,9 +69,9 @@ public class GameTester : MonoBehaviour
         bool componentsOK = true;
         
         // Find game components
-        gameManager = FindObjectOfType<TicTacToeGame>();
-        uiManager = FindObjectOfType<UIManager>();
-        soundManager = FindObjectOfType<SoundManager>();
+        gameManager = FindAnyObjectByType<TicTacToeGame>();
+        uiManager = FindAnyObjectByType<UIManager>();
+        soundManager = FindAnyObjectByType<SoundManager>();
         
         // Test Game Manager
         if (gameManager == null)
@@ -268,7 +268,7 @@ public class GameTester : MonoBehaviour
     {
         if (gameManager == null)
         {
-            gameManager = FindObjectOfType<TicTacToeGame>();
+            gameManager = FindAnyObjectByType<TicTacToeGame>();
         }
         
         if (gameManager != null)
