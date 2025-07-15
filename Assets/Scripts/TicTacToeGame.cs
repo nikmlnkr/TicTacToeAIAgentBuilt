@@ -7,6 +7,7 @@ public class TicTacToeGame : MonoBehaviour
     public Button[] buttons = new Button[9];
     public Text statusText;
     public Button restartButton;
+    public Button backToMenuButton;
     
     [Header("UI Manager Reference")]
     public UIManager uiManager;
@@ -61,6 +62,12 @@ public class TicTacToeGame : MonoBehaviour
         {
             restartButton.onClick.RemoveAllListeners();
             restartButton.onClick.AddListener(RestartGame);
+        }
+        
+        if (backToMenuButton != null)
+        {
+            backToMenuButton.onClick.RemoveAllListeners();
+            backToMenuButton.onClick.AddListener(BackToMenu);
         }
     }
     
@@ -215,5 +222,22 @@ public class TicTacToeGame : MonoBehaviour
         }
         
         InitializeGame();
+    }
+    
+    public void BackToMenu()
+    {
+        // Play button click sound
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlayButtonClick();
+        
+        // Animate back button
+        if (uiManager != null && backToMenuButton != null)
+            uiManager.AnimateButtonPress(backToMenuButton);
+        
+        // Use UIManager if available, otherwise use SceneManager
+        if (uiManager != null)
+            uiManager.BackToMenu();
+        else if (SceneManager.Instance != null)
+            SceneManager.Instance.LoadMainMenu();
     }
 }

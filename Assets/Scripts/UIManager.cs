@@ -34,7 +34,10 @@ public class UIManager : MonoBehaviour
     
     public void StartGame()
     {
-        StartCoroutine(TransitionToGame());
+        if (SceneManager.Instance != null)
+            SceneManager.Instance.LoadGame();
+        else
+            StartCoroutine(TransitionToGame());
     }
     
     public void ShowMenu()
@@ -48,12 +51,23 @@ public class UIManager : MonoBehaviour
     
     public void QuitGame()
     {
-        Debug.Log("Quitting Game...");
-        Application.Quit();
-        
-        #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-        #endif
+        if (SceneManager.Instance != null)
+            SceneManager.Instance.QuitGame();
+        else
+        {
+            Debug.Log("Quitting Game...");
+            Application.Quit();
+            
+            #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+            #endif
+        }
+    }
+    
+    public void BackToMenu()
+    {
+        if (SceneManager.Instance != null)
+            SceneManager.Instance.LoadMainMenu();
     }
     
     IEnumerator TransitionToGame()

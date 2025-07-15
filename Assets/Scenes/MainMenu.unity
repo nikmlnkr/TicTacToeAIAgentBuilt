@@ -217,7 +217,7 @@ GameObject:
   - component: {fileID: 1000000002}
   - component: {fileID: 1000000003}
   m_Layer: 0
-  m_Name: SceneSetupManager
+  m_Name: MenuSetupManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -247,7 +247,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000000001}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 845b0f9fe8c7b4a5e8c4a9dabe3c7c6e, type: 3}
+  m_Script: {fileID: 11500000, guid: 9d8f7b2e4a1c5d74fa5b6c3e8e4f1d2a, type: 3}
   m_Name: ""
   m_EditorClassIdentifier: ""
   autoSetup: 1
