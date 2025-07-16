@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 /// <summary>
 /// Automatically sets up the complete tic-tac-toe game when the scene loads
@@ -87,8 +88,8 @@ public class AutoGameSetup : MonoBehaviour
             Button button = buttonObj.AddComponent<Button>();
             button.targetGraphic = buttonImage;
             
-            // Create Text child for X/O display
-            GameObject textObj = new GameObject("Text");
+            // Create TextMeshPro Text child for X/O display
+            GameObject textObj = new GameObject("Text (TMP)");
             textObj.transform.SetParent(buttonObj.transform);
             textObj.layer = 5; // UI layer
             
@@ -99,12 +100,11 @@ public class AutoGameSetup : MonoBehaviour
             textRect.anchoredPosition = Vector2.zero;
             textRect.localScale = Vector3.one;
             
-            Text buttonText = textObj.AddComponent<Text>();
+            TMP_Text buttonText = textObj.AddComponent<TextMeshProUGUI>();
             buttonText.text = "";
-            buttonText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
             buttonText.fontSize = 48;
-            buttonText.fontStyle = FontStyle.Bold;
-            buttonText.alignment = TextAnchor.MiddleCenter;
+            buttonText.fontStyle = FontStyles.Bold;
+            buttonText.alignment = TextAlignmentOptions.Center;
             buttonText.color = Color.black;
             
             // Store button reference
@@ -112,7 +112,7 @@ public class AutoGameSetup : MonoBehaviour
             
             // Add click listener
             int buttonIndex = i; // Capture for closure
-            button.onClick.AddListener(() => gameManager.MakeMove(buttonIndex));
+            button.onClick.AddListener(() => gameManager.OnCellClicked(buttonIndex));
         }
         
         // Assign buttons to game manager

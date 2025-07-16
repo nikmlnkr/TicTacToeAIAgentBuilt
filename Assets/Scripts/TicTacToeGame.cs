@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class TicTacToeGame : MonoBehaviour
 {
     [Header("Game Settings")]
     public Button[] buttons = new Button[9];
-    public Text statusText;
+    public TMP_Text statusText;
     public Button restartButton;
     
     [Header("UI Manager Reference")]
@@ -44,7 +45,7 @@ public class TicTacToeGame : MonoBehaviour
         // Clear button texts and reset colors
         foreach (Button button in buttons)
         {
-            Text buttonText = button.GetComponentInChildren<Text>();
+            TMP_Text buttonText = button.GetComponentInChildren<TMP_Text>();
             if (buttonText != null)
                 buttonText.text = "";
             button.interactable = true;
@@ -89,7 +90,7 @@ public class TicTacToeGame : MonoBehaviour
         
         // Make the move
         board[index] = currentPlayer;
-        Text buttonText = buttons[index].GetComponentInChildren<Text>();
+        TMP_Text buttonText = buttons[index].GetComponentInChildren<TMP_Text>();
         if (buttonText != null)
             buttonText.text = currentPlayer;
         buttons[index].interactable = false;

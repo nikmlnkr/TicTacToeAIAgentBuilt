@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -19,7 +20,7 @@ public class CompleteSceneSetup : MonoBehaviour
     public Canvas gameCanvas;
     public GameObject gamePanel;
     public GameObject gameBoard;
-    public Text statusText;
+    public TMP_Text statusText;
     
     void Start()
     {
@@ -99,7 +100,7 @@ public class CompleteSceneSetup : MonoBehaviour
             GameObject statusGO = GameObject.Find("StatusText");
             if (statusGO != null)
             {
-                statusText = statusGO.GetComponent<Text>();
+                statusText = statusGO.GetComponent<TMP_Text>();
             }
         }
         
@@ -200,16 +201,17 @@ public class CompleteSceneSetup : MonoBehaviour
         RectTransform rect = buttonGO.AddComponent<RectTransform>();
         rect.sizeDelta = new Vector2(140, 140);
         
-        // Add Image component (for visual background)
+        // Add Image component
         Image buttonImage = buttonGO.AddComponent<Image>();
         buttonImage.color = Color.white;
         buttonImage.sprite = CreateButtonSprite();
         
         // Add Button component
         Button button = buttonGO.AddComponent<Button>();
+        button.targetGraphic = buttonImage;
         
-        // Create text child for X/O display
-        GameObject textGO = new GameObject("Text");
+        // Create TextMeshPro Text child
+        GameObject textGO = new GameObject("Text (TMP)");
         textGO.transform.SetParent(buttonGO.transform);
         textGO.layer = 5; // UI layer
         
@@ -219,110 +221,133 @@ public class CompleteSceneSetup : MonoBehaviour
         textRect.sizeDelta = Vector2.zero;
         textRect.anchoredPosition = Vector2.zero;
         
-        Text buttonText = textGO.AddComponent<Text>();
+        TMP_Text buttonText = textGO.AddComponent<TextMeshProUGUI>();
         buttonText.text = "";
-        buttonText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        buttonText.fontSize = 72;
-        buttonText.fontStyle = FontStyle.Bold;
-        buttonText.alignment = TextAnchor.MiddleCenter;
+        buttonText.fontSize = 48;
+        buttonText.fontStyle = FontStyles.Bold;
+        buttonText.alignment = TextAlignmentOptions.Center;
         buttonText.color = Color.black;
+        
+        Debug.Log($"✅ Button {index} created with TextMeshPro");
     }
     
     private Sprite CreateButtonSprite()
     {
-        // Create a simple white sprite for the button background
+        // Create a simple white square sprite for buttons
         Texture2D texture = new Texture2D(1, 1);
         texture.SetPixel(0, 0, Color.white);
         texture.Apply();
         
-        return Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
+        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
+        return sprite;
     }
     
     private void CreateRestartButton()
     {
-        if (gamePanel == null) return;
+        if (gamePanel == null)
+        {
+            Debug.LogError("❌ GamePanel not found! Cannot create restart button.");
+            return;
+        }
         
         // Check if restart button already exists
-        if (GameObject.Find("RestartButton") != null) return;
+        Transform existingRestart = gamePanel.transform.Find("RestartButton");
+        if (existingRestart != null)
+        {
+            Debug.Log("✅ Restart button already exists");
+            return;
+        }
         
-        GameObject restartButtonGO = new GameObject("RestartButton");
-        restartButtonGO.transform.SetParent(gamePanel.transform);
-        restartButtonGO.layer = 5; // UI layer
+        // Create restart button
+        GameObject restartGO = new GameObject("RestartButton");
+        restartGO.transform.SetParent(gamePanel.transform);
+        restartGO.layer = 5; // UI layer
         
-        RectTransform rect = restartButtonGO.AddComponent<RectTransform>();
-        rect.anchorMin = new Vector2(0.5f, 0.1f);
-        rect.anchorMax = new Vector2(0.5f, 0.1f);
-        rect.sizeDelta = new Vector2(200, 60);
-        rect.anchoredPosition = Vector2.zero;
+        RectTransform restartRect = restartGO.AddComponent<RectTransform>();
+        restartRect.anchorMin = new Vector2(0.5f, 0.1f);
+        restartRect.anchorMax = new Vector2(0.5f, 0.2f);
+        restartRect.sizeDelta = new Vector2(200, 60);
+        restartRect.anchoredPosition = Vector2.zero;
         
-        Button button = restartButtonGO.AddComponent<Button>();
-        Image buttonImage = restartButtonGO.AddComponent<Image>();
-        buttonImage.color = new Color(0.2f, 0.6f, 0.2f, 1f); // Green
-        buttonImage.sprite = CreateButtonSprite();
+        Image restartImage = restartGO.AddComponent<Image>();
+        restartImage.color = new Color(0.2f, 0.6f, 1f, 1f);
         
-        // Create text
-        GameObject textGO = new GameObject("Text");
-        textGO.transform.SetParent(restartButtonGO.transform);
-        textGO.layer = 5; // UI layer
+        Button restartButton = restartGO.AddComponent<Button>();
+        restartButton.targetGraphic = restartImage;
         
-        RectTransform textRect = textGO.AddComponent<RectTransform>();
-        textRect.anchorMin = Vector2.zero;
-        textRect.anchorMax = Vector2.one;
-        textRect.sizeDelta = Vector2.zero;
-        textRect.anchoredPosition = Vector2.zero;
+        // Create TextMeshPro Text child
+        GameObject restartTextGO = new GameObject("Text (TMP)");
+        restartTextGO.transform.SetParent(restartGO.transform);
+        restartTextGO.layer = 5; // UI layer
         
-        Text buttonText = textGO.AddComponent<Text>();
-        buttonText.text = "Restart";
-        buttonText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        buttonText.fontSize = 24;
-        buttonText.fontStyle = FontStyle.Bold;
-        buttonText.alignment = TextAnchor.MiddleCenter;
-        buttonText.color = Color.white;
+        RectTransform restartTextRect = restartTextGO.AddComponent<RectTransform>();
+        restartTextRect.anchorMin = Vector2.zero;
+        restartTextRect.anchorMax = Vector2.one;
+        restartTextRect.sizeDelta = Vector2.zero;
+        restartTextRect.anchoredPosition = Vector2.zero;
         
-        Debug.Log("✅ Restart button created");
+        TMP_Text restartText = restartTextGO.AddComponent<TextMeshProUGUI>();
+        restartText.text = "Restart";
+        restartText.fontSize = 24;
+        restartText.fontStyle = FontStyles.Bold;
+        restartText.alignment = TextAlignmentOptions.Center;
+        restartText.color = Color.white;
+        
+        Debug.Log("✅ Restart button created with TextMeshPro");
     }
     
     private void WireUpGameReferences()
     {
+        // Find the game manager
         TicTacToeGame gameManager = FindObjectOfType<TicTacToeGame>();
-        UIManager uiManager = FindObjectOfType<UIManager>();
-        
         if (gameManager == null)
         {
             Debug.LogError("❌ Game Manager not found!");
             return;
         }
         
-        // Wire up game buttons
-        Button[] buttons = gameBoard.GetComponentsInChildren<Button>();
-        System.Array.Resize(ref gameManager.buttons, 9);
-        
-        for (int i = 0; i < Mathf.Min(buttons.Length, 9); i++)
+        // Wire up buttons
+        if (gameBoard != null)
         {
-            gameManager.buttons[i] = buttons[i];
+            Button[] buttons = new Button[9];
+            for (int i = 0; i < 9; i++)
+            {
+                Transform buttonTransform = gameBoard.transform.Find($"Button{i}");
+                if (buttonTransform != null)
+                {
+                    buttons[i] = buttonTransform.GetComponent<Button>();
+                }
+            }
+            gameManager.buttons = buttons;
+            Debug.Log("✅ Game buttons wired up");
         }
         
         // Wire up status text
-        gameManager.statusText = statusText;
+        if (statusText != null)
+        {
+            gameManager.statusText = statusText;
+            Debug.Log("✅ Status text wired up");
+        }
         
         // Wire up restart button
-        Button restartButton = GameObject.Find("RestartButton")?.GetComponent<Button>();
-        if (restartButton != null)
+        if (gamePanel != null)
         {
-            gameManager.restartButton = restartButton;
+            Transform restartTransform = gamePanel.transform.Find("RestartButton");
+            if (restartTransform != null)
+            {
+                gameManager.restartButton = restartTransform.GetComponent<Button>();
+                Debug.Log("✅ Restart button wired up");
+            }
         }
         
         // Wire up UI Manager
+        UIManager uiManager = FindObjectOfType<UIManager>();
         if (uiManager != null)
         {
             gameManager.uiManager = uiManager;
-            uiManager.gamePanel = gamePanel;
+            Debug.Log("✅ UI Manager wired up");
         }
         
-        Debug.Log("✅ All references wired up successfully");
-        Debug.Log($"🎯 Game Manager has {gameManager.buttons.Length} buttons configured");
-        Debug.Log($"🎯 Status Text: {(gameManager.statusText != null ? "✅" : "❌")}");
-        Debug.Log($"🎯 Restart Button: {(gameManager.restartButton != null ? "✅" : "❌")}");
-        Debug.Log($"🎯 UI Manager: {(gameManager.uiManager != null ? "✅" : "❌")}");
+        Debug.Log("✅ All game references wired up successfully!");
     }
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using System.Collections;
 
 public class UIManager : MonoBehaviour
@@ -9,7 +10,7 @@ public class UIManager : MonoBehaviour
     public GameObject menuPanel;
     public Button playButton;
     public Button quitButton;
-    public Text titleText;
+    public TMP_Text titleText;
     
     [Header("Animation Settings")]
     public float fadeSpeed = 2f;

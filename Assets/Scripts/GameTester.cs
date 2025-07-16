@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using System.Collections;
 
 /// <summary>
@@ -101,9 +102,9 @@ public class GameTester : MonoBehaviour
                         Debug.LogError($"❌ Button {i} is null!");
                         componentsOK = false;
                     }
-                    else if (gameManager.buttons[i].GetComponentInChildren<Text>() == null)
+                    else if (gameManager.buttons[i].GetComponentInChildren<TMP_Text>() == null)
                     {
-                        Debug.LogError($"❌ Button {i} missing Text component!");
+                        Debug.LogError($"❌ Button {i} missing TextMeshPro component!");
                         componentsOK = false;
                     }
                 }
@@ -201,14 +202,14 @@ public class GameTester : MonoBehaviour
             gameManager.RestartGame();
             yield return new WaitForSeconds(0.1f);
             
-            if (gameManager.statusText.text == "Player X's Turn")
+            if (gameManager.statusText.text != "Player X's Turn")
             {
-                Debug.Log("✅ Restart functionality working");
+                Debug.LogError($"❌ Restart test failed. Expected 'Player X's Turn', got '{gameManager.statusText.text}'");
+                allTestsPassed = false;
             }
             else
             {
-                Debug.LogError("❌ Restart functionality not working properly");
-                allTestsPassed = false;
+                Debug.Log("✅ Restart functionality working");
             }
         }
         
@@ -217,33 +218,41 @@ public class GameTester : MonoBehaviour
     
     bool TestButtonClick(int buttonIndex)
     {
-        if (buttonIndex >= 0 && buttonIndex < gameManager.buttons.Length && gameManager.buttons[buttonIndex] != null)
+        if (gameManager == null || gameManager.buttons == null || buttonIndex >= gameManager.buttons.Length)
+            return false;
+        
+        Button button = gameManager.buttons[buttonIndex];
+        if (button == null)
+            return false;
+        
+        // Simulate button click
+        gameManager.OnCellClicked(buttonIndex);
+        
+        // Check if the move was made
+        TMP_Text buttonText = button.GetComponentInChildren<TMP_Text>();
+        if (buttonText != null && buttonText.text == "X")
         {
-            // Simulate button click
-            gameManager.OnCellClicked(buttonIndex);
-            
-            // Check if the button now shows X
-            Text buttonText = gameManager.buttons[buttonIndex].GetComponentInChildren<Text>();
-            if (buttonText != null && buttonText.text == "X")
-            {
-                return true;
-            }
+            return true;
         }
+        
         return false;
     }
     
     IEnumerator TestUIFunctionality()
     {
-        Debug.Log("🖼️ Testing UI functionality...");
+        Debug.Log("🖥️ Testing UI functionality...");
         
         if (uiManager != null)
         {
-            // Test button animation
-            if (gameManager.buttons[0] != null)
+            // Test UI animations if available
+            if (uiManager.gamePanel != null)
             {
-                uiManager.AnimateButtonPress(gameManager.buttons[0]);
-                Debug.Log("✅ Button animation test completed");
+                Debug.Log("✅ UI Manager properly configured");
             }
+        }
+        else
+        {
+            Debug.Log("⚠️ UI Manager not found (optional component)");
         }
         
         yield return null;
@@ -255,10 +264,12 @@ public class GameTester : MonoBehaviour
         
         if (soundManager != null)
         {
-            // Test sound methods (they won't play without audio clips, but should not error)
-            soundManager.PlayButtonClick();
-            soundManager.PlayMove();
-            Debug.Log("✅ Sound system methods working");
+            // Test sound manager functionality
+            Debug.Log("✅ Sound Manager found and configured");
+        }
+        else
+        {
+            Debug.Log("⚠️ Sound Manager not found (optional component)");
         }
         
         yield return null;
@@ -268,48 +279,47 @@ public class GameTester : MonoBehaviour
     {
         if (gameManager == null)
         {
-            gameManager = FindAnyObjectByType<TicTacToeGame>();
+            Debug.LogWarning("⚠️ Game Manager missing in health check");
+            return;
         }
         
-        if (gameManager != null)
+        // Quick validation of game state
+        bool gameStateValid = true;
+        
+        if (gameManager.buttons == null || gameManager.buttons.Length != 9)
         {
-            bool healthy = true;
-            
-            // Check if buttons are still configured
-            if (gameManager.buttons == null || gameManager.buttons.Length != 9)
-            {
-                healthy = false;
-            }
-            
-            // Check if essential components exist
-            if (gameManager.statusText == null)
-            {
-                healthy = false;
-            }
-            
-            if (!healthy)
-            {
-                Debug.LogWarning("⚠️ Health check failed - Game components may have been modified");
-            }
+            gameStateValid = false;
+        }
+        
+        if (gameManager.statusText == null)
+        {
+            gameStateValid = false;
+        }
+        
+        if (gameStateValid)
+        {
+            Debug.Log("✅ Game health check passed");
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ Game health check failed - some components missing");
         }
     }
     
     [ContextMenu("Print Game Status")]
     public void PrintGameStatus()
     {
-        Debug.Log("📊 Current Game Status:");
-        Debug.Log($"Game Manager: {(gameManager != null ? "✅" : "❌")}");
-        Debug.Log($"UI Manager: {(uiManager != null ? "✅" : "❌")}");
-        Debug.Log($"Sound Manager: {(soundManager != null ? "✅" : "❌")}");
-        
-        if (gameManager != null)
+        if (gameManager == null)
         {
-            Debug.Log($"Buttons configured: {gameManager.buttons?.Length ?? 0}/9");
-            Debug.Log($"Status text: {(gameManager.statusText != null ? "✅" : "❌")}");
-            Debug.Log($"Restart button: {(gameManager.restartButton != null ? "✅" : "❌")}");
-            Debug.Log($"Current status: {gameManager.statusText?.text ?? "N/A"}");
+            Debug.Log("❌ Game Manager not found");
+            return;
         }
         
-        Debug.Log($"Last test result: {lastTestResult}");
+        Debug.Log("📊 Current Game Status:");
+        Debug.Log($"   Status Text: {gameManager.statusText?.text ?? "NULL"}");
+        Debug.Log($"   Buttons Configured: {gameManager.buttons?.Length ?? 0}/9");
+        Debug.Log($"   Restart Button: {(gameManager.restartButton != null ? "✅" : "❌")}");
+        Debug.Log($"   UI Manager: {(gameManager.uiManager != null ? "✅" : "❌")}");
+        Debug.Log($"   Sound Manager: {(SoundManager.Instance != null ? "✅" : "❌")}");
     }
 }

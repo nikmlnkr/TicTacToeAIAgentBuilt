@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 /// <summary>
 /// Helper script to automatically set up the Tic Tac Toe game scene
@@ -12,7 +13,7 @@ public class GameSetupHelper : MonoBehaviour
     public bool autoSetupScene = false;
     
     [Header("UI Configuration")]
-    public Font gameFont;
+    public TMP_FontAsset gameFont;
     public Color buttonColor = Color.white;
     public Color backgroundColor = new Color(0.1f, 0.1f, 0.2f, 1f);
     
@@ -149,12 +150,12 @@ public class GameSetupHelper : MonoBehaviour
         rect.sizeDelta = new Vector2(600, 80);
         rect.anchoredPosition = Vector2.zero;
         
-        Text text = statusTextGO.AddComponent<Text>();
+        TMP_Text text = statusTextGO.AddComponent<TextMeshProUGUI>();
         text.text = "Player X's Turn";
-        text.font = gameFont ? gameFont : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        text.font = gameFont;
         text.fontSize = 36;
-        text.fontStyle = FontStyle.Bold;
-        text.alignment = TextAnchor.MiddleCenter;
+        text.fontStyle = FontStyles.Bold;
+        text.alignment = TextAlignmentOptions.Center;
         text.color = Color.white;
         
         return statusTextGO;
@@ -199,8 +200,8 @@ public class GameSetupHelper : MonoBehaviour
         Image buttonImage = buttonGO.AddComponent<Image>();
         buttonImage.color = buttonColor;
         
-        // Create button text
-        GameObject textGO = new GameObject("Text");
+        // Create TextMeshPro Text child
+        GameObject textGO = new GameObject("Text (TMP)");
         textGO.transform.SetParent(buttonGO.transform);
         
         RectTransform textRect = textGO.AddComponent<RectTransform>();
@@ -209,13 +210,13 @@ public class GameSetupHelper : MonoBehaviour
         textRect.sizeDelta = Vector2.zero;
         textRect.anchoredPosition = Vector2.zero;
         
-        Text buttonText = textGO.AddComponent<Text>();
-        buttonText.text = "";
-        buttonText.font = gameFont ? gameFont : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        buttonText.fontSize = 72;
-        buttonText.fontStyle = FontStyle.Bold;
-        buttonText.alignment = TextAnchor.MiddleCenter;
-        buttonText.color = Color.black;
+        TMP_Text text = textGO.AddComponent<TextMeshProUGUI>();
+        text.text = "";
+        text.font = gameFont;
+        text.fontSize = 48;
+        text.fontStyle = FontStyles.Bold;
+        text.alignment = TextAlignmentOptions.Center;
+        text.color = Color.black;
         
         return buttonGO;
     }
@@ -227,16 +228,16 @@ public class GameSetupHelper : MonoBehaviour
         
         RectTransform rect = restartButtonGO.AddComponent<RectTransform>();
         rect.anchorMin = new Vector2(0.5f, 0.1f);
-        rect.anchorMax = new Vector2(0.5f, 0.1f);
+        rect.anchorMax = new Vector2(0.5f, 0.2f);
         rect.sizeDelta = new Vector2(200, 60);
         rect.anchoredPosition = Vector2.zero;
         
         Button button = restartButtonGO.AddComponent<Button>();
         Image buttonImage = restartButtonGO.AddComponent<Image>();
-        buttonImage.color = new Color(0.2f, 0.6f, 0.2f, 1f); // Green color
+        buttonImage.color = new Color(0.2f, 0.6f, 1f, 1f);
         
-        // Create button text
-        GameObject textGO = new GameObject("Text");
+        // Create TextMeshPro Text child
+        GameObject textGO = new GameObject("Text (TMP)");
         textGO.transform.SetParent(restartButtonGO.transform);
         
         RectTransform textRect = textGO.AddComponent<RectTransform>();
@@ -245,13 +246,13 @@ public class GameSetupHelper : MonoBehaviour
         textRect.sizeDelta = Vector2.zero;
         textRect.anchoredPosition = Vector2.zero;
         
-        Text buttonText = textGO.AddComponent<Text>();
-        buttonText.text = "Restart";
-        buttonText.font = gameFont ? gameFont : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        buttonText.fontSize = 24;
-        buttonText.fontStyle = FontStyle.Bold;
-        buttonText.alignment = TextAnchor.MiddleCenter;
-        buttonText.color = Color.white;
+        TMP_Text text = textGO.AddComponent<TextMeshProUGUI>();
+        text.text = "Restart";
+        text.font = gameFont;
+        text.fontSize = 24;
+        text.fontStyle = FontStyles.Bold;
+        text.alignment = TextAlignmentOptions.Center;
+        text.color = Color.white;
         
         return restartButtonGO;
     }
@@ -261,74 +262,138 @@ public class GameSetupHelper : MonoBehaviour
         GameObject menuPanel = new GameObject("MenuPanel");
         menuPanel.transform.SetParent(canvasTransform);
         
-        RectTransform rect = menuPanel.AddComponent<RectTransform>();
-        rect.anchorMin = Vector2.zero;
-        rect.anchorMax = Vector2.one;
-        rect.sizeDelta = Vector2.zero;
-        rect.anchoredPosition = Vector2.zero;
+        RectTransform menuPanelRect = menuPanel.AddComponent<RectTransform>();
+        menuPanelRect.anchorMin = Vector2.zero;
+        menuPanelRect.anchorMax = Vector2.one;
+        menuPanelRect.sizeDelta = Vector2.zero;
+        menuPanelRect.anchoredPosition = Vector2.zero;
         
-        Image image = menuPanel.AddComponent<Image>();
-        image.color = new Color(0.05f, 0.05f, 0.1f, 1f);
+        Image menuPanelImage = menuPanel.AddComponent<Image>();
+        menuPanelImage.color = backgroundColor;
         
-        // Initially disable menu panel (game panel will be active)
-        menuPanel.SetActive(false);
+        // Create title text
+        GameObject titleGO = new GameObject("TitleText");
+        titleGO.transform.SetParent(menuPanel.transform);
         
-        Debug.Log("✅ Menu Panel created");
+        RectTransform titleRect = titleGO.AddComponent<RectTransform>();
+        titleRect.anchorMin = new Vector2(0.5f, 0.7f);
+        titleRect.anchorMax = new Vector2(0.5f, 0.8f);
+        titleRect.sizeDelta = new Vector2(600, 100);
+        titleRect.anchoredPosition = Vector2.zero;
+        
+        TMP_Text titleText = titleGO.AddComponent<TextMeshProUGUI>();
+        titleText.text = "Tic Tac Toe";
+        titleText.font = gameFont;
+        titleText.fontSize = 72;
+        titleText.fontStyle = FontStyles.Bold;
+        titleText.alignment = TextAlignmentOptions.Center;
+        titleText.color = Color.white;
+        
+        // Create play button
+        GameObject playButtonGO = new GameObject("PlayButton");
+        playButtonGO.transform.SetParent(menuPanel.transform);
+        
+        RectTransform playRect = playButtonGO.AddComponent<RectTransform>();
+        playRect.anchorMin = new Vector2(0.5f, 0.4f);
+        playRect.anchorMax = new Vector2(0.5f, 0.5f);
+        playRect.sizeDelta = new Vector2(200, 60);
+        playRect.anchoredPosition = Vector2.zero;
+        
+        Button playButton = playButtonGO.AddComponent<Button>();
+        Image playButtonImage = playButtonGO.AddComponent<Image>();
+        playButtonImage.color = new Color(0.2f, 0.8f, 0.2f, 1f);
+        
+        // Create play button text
+        GameObject playTextGO = new GameObject("Text (TMP)");
+        playTextGO.transform.SetParent(playButtonGO.transform);
+        
+        RectTransform playTextRect = playTextGO.AddComponent<RectTransform>();
+        playTextRect.anchorMin = Vector2.zero;
+        playTextRect.anchorMax = Vector2.one;
+        playTextRect.sizeDelta = Vector2.zero;
+        playTextRect.anchoredPosition = Vector2.zero;
+        
+        TMP_Text playText = playTextGO.AddComponent<TextMeshProUGUI>();
+        playText.text = "Play";
+        playText.font = gameFont;
+        playText.fontSize = 24;
+        playText.fontStyle = FontStyles.Bold;
+        playText.alignment = TextAlignmentOptions.Center;
+        playText.color = Color.white;
+        
         return menuPanel;
     }
     
     private void SetupGameManagerReferences(GameObject gameManager, GameObject gamePanel, GameObject uiManager)
     {
         TicTacToeGame gameScript = gameManager.GetComponent<TicTacToeGame>();
-        
-        // Find and assign buttons
-        Button[] buttons = gamePanel.GetComponentsInChildren<Button>();
-        System.Array.Resize(ref gameScript.buttons, 9);
-        
-        int buttonIndex = 0;
-        foreach (Button button in buttons)
+        if (gameScript != null)
         {
-            if (button.name.StartsWith("Button") && buttonIndex < 9)
+            // Find buttons in the game board
+            Transform gameBoard = gamePanel.transform.Find("GameBoard");
+            if (gameBoard != null)
             {
-                gameScript.buttons[buttonIndex] = button;
-                buttonIndex++;
+                Button[] buttons = new Button[9];
+                for (int i = 0; i < 9; i++)
+                {
+                    Transform buttonTransform = gameBoard.Find($"Button{i}");
+                    if (buttonTransform != null)
+                    {
+                        buttons[i] = buttonTransform.GetComponent<Button>();
+                    }
+                }
+                gameScript.buttons = buttons;
             }
-            else if (button.name == "RestartButton")
+            
+            // Find status text
+            Transform statusTextTransform = gamePanel.transform.Find("StatusText");
+            if (statusTextTransform != null)
             {
-                gameScript.restartButton = button;
+                gameScript.statusText = statusTextTransform.GetComponent<TMP_Text>();
+            }
+            
+            // Find restart button
+            Transform restartButtonTransform = gamePanel.transform.Find("RestartButton");
+            if (restartButtonTransform != null)
+            {
+                gameScript.restartButton = restartButtonTransform.GetComponent<Button>();
+            }
+            
+            // Assign UI manager
+            if (uiManager != null)
+            {
+                gameScript.uiManager = uiManager.GetComponent<UIManager>();
             }
         }
-        
-        // Assign status text
-        Text statusText = gamePanel.GetComponentInChildren<Text>();
-        if (statusText != null && statusText.name == "StatusText")
-        {
-            gameScript.statusText = statusText;
-        }
-        
-        // Assign UI Manager
-        gameScript.uiManager = uiManager.GetComponent<UIManager>();
-        
-        Debug.Log("✅ Game Manager references configured");
     }
     
     private void SetupUIManagerReferences(GameObject uiManager, GameObject gamePanel, GameObject menuPanel)
     {
         UIManager uiScript = uiManager.GetComponent<UIManager>();
-        
-        uiScript.gamePanel = gamePanel;
-        uiScript.menuPanel = menuPanel;
-        
-        // Find play and quit buttons in menu panel (if they exist)
-        Button[] menuButtons = menuPanel.GetComponentsInChildren<Button>(true);
-        foreach (Button button in menuButtons)
+        if (uiScript != null)
         {
-            if (button.name.Contains("Play"))
-                uiScript.playButton = button;
-            else if (button.name.Contains("Quit"))
-                uiScript.quitButton = button;
+            uiScript.gamePanel = gamePanel;
+            uiScript.menuPanel = menuPanel;
+            
+            // Find play button in menu
+            if (menuPanel != null)
+            {
+                Transform playButtonTransform = menuPanel.transform.Find("PlayButton");
+                if (playButtonTransform != null)
+                {
+                    uiScript.playButton = playButtonTransform.GetComponent<Button>();
+                }
+            }
+            
+            // Find title text in menu
+            if (menuPanel != null)
+            {
+                Transform titleTextTransform = menuPanel.transform.Find("TitleText");
+                if (titleTextTransform != null)
+                {
+                    uiScript.titleText = titleTextTransform.GetComponent<TMP_Text>();
+                }
+            }
         }
-        
-        Debug.Log("✅ UI Manager references configured");
     }
 }
